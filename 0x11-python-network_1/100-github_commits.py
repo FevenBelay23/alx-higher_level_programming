@@ -1,19 +1,19 @@
 #!/usr/bin/python3
 """
-Get latest 10 commits from given owner and repo
+Python script that takes 2 arguments in order to solve this challenge.
+The first argument will be the repository name
+The second argument will be the owner name
 """
+import sys
+import requests
+from requests.auth import HTTPBasicAuth
 
 
 if __name__ == "__main__":
-    from requests import get
-    from sys import argv
-
-    repo = argv[1]
-    owner = argv[2]
-    api_root = f"https://api.github.com/repos/{owner}/{owner}/commits"
-    res = get(api_root)
-    res = res.json()
-    for i in range(10):
-        sha = res[i].get("sha")
-        name = (res[i].get("commit").get("author").get("name"))
-        print("{}: {}".format(sha, name))
+    repo_name = sys.argv[1]
+    owner = sys.argv[2]
+    hdrs = {"Accept": "application/vnd.github.v3+json"}
+    url = "https://api.github.com/repos/{}/{}/commits".format(owner, repo_name)
+    req = requests.get(url, headers=hdrs)
+    for commit in req.json()[0:10]:
+        [print('{}: {}'.format(commit['sha'], commit['commit']['author']['name']))]
